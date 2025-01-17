@@ -20,7 +20,7 @@ jobs:
           # Build Docker image and tag it with the commit SHA
           sudo docker build -t myapp:$IMAGE_TAG .
           cd ../Docker-compose
-          sed -i "s/image: akshay/image: akshay:${{ env.sha_short }}/g" postgres.docker.yml
+          sed -i "s/image: akshay/image: akshay:${{ env.sha_short }}/g" postgres-docker.yml
 
       - name: Push Docker image to Docker Hub (optional)
         run: |
