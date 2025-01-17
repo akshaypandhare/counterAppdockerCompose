@@ -4,7 +4,7 @@ import os
 
 app = Flask(__name__)
 
-# Database connection variables (you can set these as environment variables)
+# Database connection variables
 POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
 POSTGRES_USER = os.getenv('POSTGRES_USER', 'akshay')
@@ -29,7 +29,7 @@ def get_counter():
     cur = conn.cursor()
 
     # Retrieve the current counter value
-    cur.execute('SELECT counter FROM counter_table LIMIT 1;')
+    cur.execute('SELECT counter FROM counter_table WHERE id = 1;')
     result = cur.fetchone()
 
     if result:
@@ -41,15 +41,15 @@ def get_counter():
     # Increment the counter value
     new_count = current_count + 1
 
-    # Update the counter in the database
-    cur.execute('INSERT INTO counter_table (counter) VALUES (%s) ON CONFLICT (id) DO UPDATE SET counter = %s;', (new_count, new_count))
+    # Update the counter in the database (updating or inserting)
+    cur.execute('INSERT INTO counter_table (id, counter) VALUES (1, %s) ON CONFLICT (id) DO UPDATE SET counter = %s;', (new_count, new_count))
     conn.commit()
 
-    # Close connection
+    # Close the cursor and connection
     cur.close()
     conn.close()
 
-    return f"Akshay Current Counter Value: {new_count}"
+    return f"Current Counter Value: {new_count}"
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
