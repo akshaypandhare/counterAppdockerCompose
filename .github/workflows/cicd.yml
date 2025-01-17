@@ -18,7 +18,7 @@ jobs:
           IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-8)
           cd Python
           # Build Docker image and tag it with the commit SHA
-          sudo docker build -t myapp:$IMAGE_TAG .
+          sudo docker build -t akshay:$IMAGE_TAG .
           cd ../Docker-compose
           sed -i "s/image: akshay/image: akshay:$IMAGE_TAG/g" postgres-docker.yml
 
