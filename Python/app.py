@@ -1,17 +1,17 @@
-from flask import Flask, jsonify
+from flask import Flask
 import psycopg2
 import os
 
 app = Flask(__name__)
 
-# PostgreSQL configuration from environment variables
+# Database connection variables (you can set these as environment variables)
 POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
 POSTGRES_USER = os.getenv('POSTGRES_USER', 'akshay')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'akshay')
 POSTGRES_DB = os.getenv('POSTGRES_DB', 'akshay')
 
-# Connect to PostgreSQL
+# Establish a connection to the PostgreSQL database
 def get_db_connection():
     conn = psycopg2.connect(
         host=POSTGRES_HOST,
@@ -23,27 +23,33 @@ def get_db_connection():
     return conn
 
 @app.route('/')
-def home():
+def get_counter():
+    # Connect to the database
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cur = conn.cursor()
 
-    # Retrieve counter value from the database
-    cursor.execute('SELECT counter FROM counter_table WHERE id = 1')
-    result = cursor.fetchone()
+    # Retrieve the current counter value
+    cur.execute('SELECT counter FROM counter_table LIMIT 1;')
+    result = cur.fetchone()
 
-    # If no result found, initialize counter
-    if result is None:
-        cursor.execute('INSERT INTO counter_table (id, counter) VALUES (1, 0)')
-        conn.commit()
-        count = 0
+    if result:
+        current_count = result[0]
     else:
-        count = result[0]
+        # If no record exists, initialize counter to 0
+        current_count = 0
 
-    cursor.close()
+    # Increment the counter value
+    new_count = current_count + 1
+
+    # Update the counter in the database
+    cur.execute('INSERT INTO counter_table (counter) VALUES (%s) ON CONFLICT (id) DO UPDATE SET counter = %s;', (new_count, new_count))
+    conn.commit()
+
+    # Close connection
+    cur.close()
     conn.close()
 
-    # Return the counter as a message
-    return jsonify(message=f'Current count: {count}')
+    return f"Current Counter Value: {new_count}"
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=5000)
