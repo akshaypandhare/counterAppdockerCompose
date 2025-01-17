@@ -1,0 +1,29 @@
+name: Docker Build
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux] 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Build Docker image
+        run: |
+          # Get the short commit SHA (8 characters)
+          IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-8)
+          cd Python
+          # Build Docker image and tag it with the commit SHA
+          sudo docker build -t myapp:$IMAGE_TAG .
+
+      - name: Push Docker image to Docker Hub (optional)
+        run: |
+          cd Docker-compose
+          sudo docker stack deploy -c postgres-docker.yml akshay
