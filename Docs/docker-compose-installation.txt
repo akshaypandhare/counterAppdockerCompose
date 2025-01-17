@@ -1,0 +1,70 @@
+Steps to install docker on the ubuntu VM.
+
+apt-get update
+apt install docker.io
+
+Steps to install docker compose on the ubuntu vm.
+
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+
+
+ENable docker service on boot.
+
+sudo systemctl enable docker
+
+Create a systemd service to restart Docker Compose projects on reboot:
+
+sudo nano /etc/systemd/system/docker-compose-app.service
+
+[Unit]
+Description=Docker Compose Application Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+WorkingDirectory=/path/to/your/docker-compose-file
+ExecStart=/usr/local/bin/docker-compose up
+ExecStop=/usr/local/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target
+
+
+sudo systemctl daemon-reload
+sudo systemctl enable docker-compose-app
+
+
+Create service in the docker swarm.
+
+docker swarm init
+docker node ls
+
+Create a docker-compose.yml file 
+
+version: "3.9"
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    restart: always
+
+docker stack deploy -c docker-compose.yml test-stack
+
+docker service ls
+
+docker stop <container-id>
+
+
+
+Commands to manage docker stack/
+
+docker stack deploy -c docker-compose.yml test-stack
+docker stack ls
+docker stack rm test-stack
+docker stack services test-stack
+docker service ls
+docker service log test-stack_<service_name>   Service name is nothing but the name of the app in the docker-compose.yml

@@ -1,0 +1,14 @@
+15 Jan 2025.
+
+# New user Akshay.Pandhare
+
+# Added new user and then added the new user in the sudoers file.
+
+adduser Akshay.Pandhare
+usermod -aG sudo Akshay.Pandhare
+
+# Grant root access via sudo without password to new user.
+
+Added below line in /etc/sudoers
+
+Akshay.Pandhare ALL=(ALL) NOPASSWD:ALL

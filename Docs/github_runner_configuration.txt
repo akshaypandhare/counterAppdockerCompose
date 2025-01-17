@@ -1,0 +1,11 @@
+# Copied all steps exactly from the github repo setting page for adding self hosted runners.
+
+# For running runner as a service on the server.
+
+in the action-runner folder there is a script svc.sh
+
+run below commands.
+
+sudo ./svc.sh install
+sudo ./svc.sh start
+sudo ./svc.sh status

@@ -1,0 +1,7 @@
+# Docker and Docker compose Installation.
+
+docker was already installed with below version.
+
+Docker version 27.5.0
+
+# 

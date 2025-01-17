@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: akshay
+      POSTGRES_PASSWORD: akshay
+      POSTGRES_DB: akshay
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+        #- ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+    ports:
+      - "5432:5432"
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+
+  flaskapp:
+    image: akshay
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: akshay
+      POSTGRES_PASSWORD: akshay
+      POSTGRES_DB: akshay
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+    driver: local
