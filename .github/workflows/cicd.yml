@@ -25,5 +25,4 @@ jobs:
       - name: Push Docker image to Docker Hub (optional)
         run: |
           cd Docker-compose
-          cat postgres-docker.yml
-          #sudo docker stack deploy -c postgres-docker.yml akshay
+          sudo docker stack deploy -c postgres-docker.yml akshay
